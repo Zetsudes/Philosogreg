@@ -29,19 +29,19 @@ pthread_mutex_t	*init_forks(t_data *data)
 	return (forks);
 }
 
-void	setup_philos(t_data *data, t_philo *philos, pthread_mutex_t *forks)
+void	setup_philos(t_data *data, t_philo *philo, pthread_mutex_t *forks)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (i < data->num_philos)
 	{
-		philos[i].id = i + 1;
-		philos[i].data = data;
-		philos[i].meals_eaten = 0;
-		philos[i].last_meal_time = 0;
-		philos[i].left_fork = &forks[i];
-		philos[i].right_fork = &forks[(i + 1) % data->num_philos];
+		philo[i].id = i + 1;
+		philo[i].data = data;
+		philo[i].meals_eaten = 0;
+		philo[i].last_meal_time = 0;
+		philo[i].left_fork = &forks[i];
+		philo[i].right_fork = &forks[(i + 1) % data->num_philos];
 		i++;
 	}
 }

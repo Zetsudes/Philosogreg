@@ -36,7 +36,10 @@ void				parse_args(t_data *data, int argc, char **argv);
 
 t_philo				*init_philos(t_data *data);
 pthread_mutex_t		*init_forks(t_data *data);
-void				setup_philos(t_data *data, t_philo *philos,
-						pthread_mutex_t *forks);
+void				setup_philos(t_data *data, t_philo *philo,
+						pthread_mutex_t *fork);
+
+void				create_threads(t_data *data, t_philo *philo);
+void				*routine(void *arg);
 
 #endif
