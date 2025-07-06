@@ -2,8 +2,11 @@ CC = gcc
 CFLAGS = -Wall -Wextra -Werror -lpthread
 
 SRC = parsing.c \
-      philo.c \
-	  utils.c
+	  utils.c \
+	  init.c \
+	  monitoring.c \
+	  create.c \
+	  philo.c \
 
 BONUS_SRC =
 
