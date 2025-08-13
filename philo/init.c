@@ -10,7 +10,7 @@ void	init_data(t_data *data)
 	data->num_times = -1;
 	data->dead = 0;
 	pthread_mutex_init(&data->dead_mutex, NULL);
-	pthread_mutex_init(&data->print_mutex, NULL); 
+	pthread_mutex_init(&data->print_mutex, NULL);
 	gettimeofday(&data->start_time, NULL);
 }
 
@@ -51,23 +51,24 @@ void	setup_philos(t_data *data, t_philo *philo, pthread_mutex_t *forks)
 		philo[i].id = i + 1;
 		philo[i].data = data;
 		philo[i].meals_eaten = 0;
-		philo[i].last_meal_time = 0;
+		philo[i].last_meal_time = timestamp(data);
 		philo[i].left_fork = &forks[i];
 		philo[i].right_fork = &forks[(i + 1) % data->num_philos];
 		pthread_mutex_init(&philo[i].last_meal_mutex, NULL);
+		pthread_mutex_init(&philo[i].meals_eaten_mutex, NULL);
 		i++;
 	}
 }
 
-void	delay_philo(t_philo *philo)
+void philo_sleep(t_philo *philo, long long sleep_time_ms)
 {
-	if (philo->data->num_philos % 2 == 0) // If number of philos is even
-	{
-		if (philo->id == 0) // Delay the first one to avoid clash royale with last one
-			usleep(300);
-		else if (philo->id % 2 == 0) // If philo id is even, delay
-			usleep(100);
-	}
-	else if (philo->id % 2 == 0) // If number of philos is odd delay
-		usleep(100);
+    long long start;
+	
+	start = timestamp(philo->data);
+    while (timestamp(philo->data) - start < sleep_time_ms)
+    {
+        if (check_philo_death(philo))
+            break;
+        usleep(100);
+    }
 }

@@ -18,7 +18,7 @@ typedef struct s_data
 	int				num_times;
 	int				dead;
 	pthread_mutex_t			dead_mutex;
-	pthread_mutex_t print_mutex;
+	pthread_mutex_t 		print_mutex;
 	struct timeval				start_time;
 }					t_data;
 
@@ -31,6 +31,7 @@ typedef struct s_philo
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
 	pthread_mutex_t	last_meal_mutex;
+	pthread_mutex_t	meals_eaten_mutex;
 	struct s_data	*data;
 }					t_philo;
 
@@ -46,9 +47,7 @@ void				parse_args(t_data *data, int argc, char **argv);
 
 t_philo				*init_philos(t_data *data);
 pthread_mutex_t		*init_forks(t_data *data);
-void				setup_philos(t_data *data, t_philo *philo,
-						pthread_mutex_t *fork);
-void				delay_philo(t_philo *philo);						
+void				setup_philos(t_data *data, t_philo *philo, pthread_mutex_t *fork);
 
 void				create_threads(t_data *data, t_philo *philo);
 void				philo_eat_sleep(t_philo *philo);
@@ -60,5 +59,5 @@ int					check_philo_death(t_philo *philo);
 int					all_stomachs_full(t_philo *philos);
 void 				print_death(t_philo *philo);
 void				*monitor(void *arg);
-
+void 				philo_sleep(t_philo *philo, long long sleep_time_ms);
 #endif

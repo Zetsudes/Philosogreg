@@ -13,11 +13,16 @@ int main(int argc, char **argv)
 	philos = init_philos(&data);
 	forks = init_forks(&data);
 	setup_philos(&data, philos, forks);
-	create_threads(&data, philos);
 	if (pthread_create(&monitor_thread, NULL, &monitor, philos) != 0)
 		error_msg("Error: monitor thread creation failed\n", 1);
+	create_threads(&data, philos);
 	if (pthread_join(monitor_thread, NULL) != 0)
 		error_msg("Error: monitor thread join failed\n", 1);
+	int i = 0;
+	while (i < data.num_philos) {
+		pthread_join(philos[i].thread_id, NULL);
+		i++;
+	}
 	cleanup(&data, philos, forks);
 	return (0);
 }

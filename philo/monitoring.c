@@ -1,23 +1,30 @@
 # include "philo.h"
 
-int	check_philo_death(t_philo *philo)
+int check_philo_death(t_philo *philo)
 {
-	long long	time_since_meal;
+    long long time_since_meal;
+    int meals;
 
-    if (philo->data->num_times != -1 && philo->meals_eaten >= philo->data->num_times)
-		return (0);
-	pthread_mutex_lock(&philo->last_meal_mutex);
-	time_since_meal = timestamp(philo->data) - philo->last_meal_time;
-	pthread_mutex_unlock(&philo->last_meal_mutex);
-	if (time_since_meal > philo->data->time_to_die)
-	{
-		pthread_mutex_lock(&philo->data->dead_mutex);
-		philo->data->dead = 1;
-		print_death(philo);
-		pthread_mutex_unlock(&philo->data->dead_mutex);
-		return (1);
-	}
-	return (0);
+    pthread_mutex_lock(&philo->meals_eaten_mutex);
+    meals = philo->meals_eaten;
+    pthread_mutex_unlock(&philo->meals_eaten_mutex);
+    if (philo->data->num_times != -1 && meals >= philo->data->num_times)
+        return (0);
+    pthread_mutex_lock(&philo->last_meal_mutex);
+    time_since_meal = timestamp(philo->data) - philo->last_meal_time;
+    pthread_mutex_unlock(&philo->last_meal_mutex);
+    if (time_since_meal > philo->data->time_to_die)
+    {
+        pthread_mutex_lock(&philo->data->dead_mutex);
+        if (!philo->data->dead)
+        {
+            philo->data->dead = 1;
+            print_death(philo);
+        }
+        pthread_mutex_unlock(&philo->data->dead_mutex);
+        return (1);
+    }
+    return (0);
 }
 
 void print_death(t_philo *philo)
@@ -30,15 +37,18 @@ void print_death(t_philo *philo)
     pthread_mutex_unlock(&philo->data->print_mutex);
 }
 
-
 int	all_stomachs_full(t_philo *philos)
 {
 	int	i;
+	int meals;
 
 	i = 0;
 	while (i < philos[0].data->num_philos)
 	{
-		if (philos[i].meals_eaten < philos[0].data->num_times)
+		pthread_mutex_lock(&philos[i].meals_eaten_mutex);
+		meals = philos[i].meals_eaten;
+		pthread_mutex_unlock(&philos[i].meals_eaten_mutex);
+		if (meals < philos[0].data->num_times)
 			return (0);
 		i++;
 	}

@@ -50,15 +50,14 @@ void safe_print(t_philo *philo, const char *msg)
 {
     long long ts;
 
+	pthread_mutex_lock(&philo->data->dead_mutex);
     pthread_mutex_lock(&philo->data->print_mutex);
     ts = timestamp(philo->data);
-    pthread_mutex_lock(&philo->data->dead_mutex);
     if (!philo->data->dead)
         printf("%lld %d %s\n", ts, philo->id, msg);
     pthread_mutex_unlock(&philo->data->dead_mutex);
     pthread_mutex_unlock(&philo->data->print_mutex);
 }
-
 
 void	cleanup(t_data *data, t_philo *philos, pthread_mutex_t *forks)
 {
@@ -69,6 +68,7 @@ void	cleanup(t_data *data, t_philo *philos, pthread_mutex_t *forks)
 	{
 		pthread_mutex_destroy(&forks[i]);
 		pthread_mutex_destroy(&philos[i].last_meal_mutex);
+		pthread_mutex_destroy(&philos[i].meals_eaten_mutex);
 		i++;
 	}
 	pthread_mutex_destroy(&data->dead_mutex);
