@@ -43,5 +43,3 @@ int is_valid_arg(char *str)
         return (0);
     return (1);
 }
-
-

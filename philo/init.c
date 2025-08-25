@@ -69,6 +69,6 @@ void philo_sleep(t_philo *philo, long long sleep_time_ms)
     {
         if (check_philo_death(philo))
             break;
-        usleep(100);
+        usleep(10);
     }
 }

@@ -50,7 +50,7 @@ pthread_mutex_t		*init_forks(t_data *data);
 void				setup_philos(t_data *data, t_philo *philo, pthread_mutex_t *fork);
 
 void				create_threads(t_data *data, t_philo *philo);
-void				philo_eat_sleep(t_philo *philo);
+void				philo_eat(t_philo *philo);
 void				take_forks(t_philo *philo);
 int					run_simulation(t_philo *philo);
 void				*routine(void *arg);
@@ -59,5 +59,6 @@ int					check_philo_death(t_philo *philo);
 int					all_stomachs_full(t_philo *philos);
 void 				print_death(t_philo *philo);
 void				*monitor(void *arg);
+void				update_meal_time(t_philo *philo);
 void 				philo_sleep(t_philo *philo, long long sleep_time_ms);
 #endif

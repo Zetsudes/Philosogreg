@@ -55,6 +55,13 @@ int	all_stomachs_full(t_philo *philos)
 	return (1);
 }
 
+void	update_meal_time(t_philo *philo)
+{
+	pthread_mutex_lock(&philo->last_meal_mutex);
+	philo->last_meal_time = timestamp(philo->data);
+	pthread_mutex_unlock(&philo->last_meal_mutex);
+}
+
 void	*monitor(void *arg)
 {
 	t_philo	*philos;

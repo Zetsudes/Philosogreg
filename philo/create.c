@@ -14,31 +14,27 @@ void	create_threads(t_data *data, t_philo *philo)
 	}
 }
 
-void	philo_eat_sleep(t_philo *philo) 
-{ 
-	long long	ts;  
-
-	if (check_philo_death(philo)) 
-		return; 
-	ts = timestamp(philo->data); // Current time 
-	safe_print(philo, "is eating"); 
-	pthread_mutex_lock(&philo->last_meal_mutex); 
-	philo->last_meal_time = ts; 
-	pthread_mutex_unlock(&philo->last_meal_mutex); 
-	philo_sleep(philo, philo->data->time_to_eat); 
+void	philo_eat(t_philo *philo)
+{
+	if (check_philo_death(philo))
+	{
+		pthread_mutex_unlock(philo->left_fork);
+		pthread_mutex_unlock(philo->right_fork);
+		return;
+	}
+	safe_print(philo, "is eating");
+	update_meal_time(philo);
+	philo_sleep(philo, philo->data->time_to_eat);
 	pthread_mutex_unlock(philo->left_fork);
 	pthread_mutex_unlock(philo->right_fork);
-	pthread_mutex_lock(&philo->last_meal_mutex); 
-	philo->last_meal_time = timestamp(philo->data); 
-	pthread_mutex_unlock(&philo->last_meal_mutex); 
-	pthread_mutex_lock(&philo->meals_eaten_mutex); 
-	philo->meals_eaten++; 
-	pthread_mutex_unlock(&philo->meals_eaten_mutex); 
-	if (check_philo_death(philo)) 
-		return; 
-	ts = timestamp(philo->data); 
-	safe_print(philo, "is sleeping"); 
-	philo_sleep(philo, philo->data->time_to_sleep); 
+	update_meal_time(philo);
+	pthread_mutex_lock(&philo->meals_eaten_mutex);
+	philo->meals_eaten++;
+	pthread_mutex_unlock(&philo->meals_eaten_mutex);
+	if (check_philo_death(philo))
+		return;
+	safe_print(philo, "is sleeping");
+	philo_sleep(philo, philo->data->time_to_sleep);
 }
 
 void	take_forks(t_philo *philo)
@@ -95,7 +91,7 @@ void	*routine(void *arg)
 	while (run_simulation(philo))
 	{
 	take_forks(philo);
-	philo_eat_sleep(philo);
+	philo_eat(philo);
 	safe_print(philo, "is thinking");
 	}
 	return (NULL);
